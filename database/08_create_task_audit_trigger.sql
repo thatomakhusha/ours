@@ -15,3 +15,6 @@ CREATE TRIGGER trg_validate_task_audit_fields
 BEFORE INSERT ON tasks
 FOR EACH ROW
 EXECUTE FUNCTION validate_task_audit_fields();
+
+REVOKE ALL ON FUNCTION public.validate_task_audit_fields()
+FROM PUBLIC;
