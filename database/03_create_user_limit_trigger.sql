@@ -1,8 +1,8 @@
-CREATE FUNCTION check_user_account_limit()
+CREATE OR REPLACE FUNCTION public.check_user_account_limit()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = pg_catalog, public
+SET search_path = pg_catalog
 AS $$
 DECLARE
     v_control_id INTEGER;
@@ -10,7 +10,7 @@ DECLARE
 BEGIN
     SELECT control_id
     INTO v_control_id
-    FROM user_account_control
+    FROM public.user_account_control
     WHERE control_id = 1
     FOR UPDATE;
 
@@ -20,7 +20,7 @@ BEGIN
 
     SELECT COUNT(*)
     INTO v_user_count
-    FROM users;
+    FROM public.users;
 
     IF v_user_count >= 2 THEN
         RAISE EXCEPTION 'Only two user accounts are allowed';
@@ -33,6 +33,6 @@ $$;
 CREATE TRIGGER trg_check_user_account_limit
 BEFORE INSERT ON users
 FOR EACH ROW
-EXECUTE FUNCTION check_user_account_limit();
+EXECUTE FUNCTION public.check_user_account_limit();
 
-REVOKE ALL ON FUNCTION check_user_account_limit() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.check_user_account_limit() FROM PUBLIC;
