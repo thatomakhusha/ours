@@ -19,3 +19,6 @@ CREATE TRIGGER trg_update_note_edit_status
 BEFORE UPDATE ON notes
 FOR EACH ROW
 EXECUTE FUNCTION update_note_edit_status();
+
+REVOKE ALL ON FUNCTION public.update_note_edit_status()
+FROM PUBLIC;
