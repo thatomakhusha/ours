@@ -27,3 +27,6 @@ CREATE TRIGGER trg_protect_note_original_fields
 BEFORE UPDATE ON notes
 FOR EACH ROW
 EXECUTE FUNCTION protect_note_original_fields();
+
+REVOKE ALL ON FUNCTION public.protect_note_original_fields()
+FROM PUBLIC;
