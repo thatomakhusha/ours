@@ -21,3 +21,6 @@ CREATE TRIGGER trg_update_task_completion_timestamp
 BEFORE UPDATE ON tasks
 FOR EACH ROW
 EXECUTE FUNCTION update_task_completion_timestamp();
+
+REVOKE ALL ON FUNCTION public.update_task_completion_timestamp()
+FROM PUBLIC;
