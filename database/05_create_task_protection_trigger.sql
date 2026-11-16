@@ -31,3 +31,6 @@ CREATE TRIGGER trg_protect_task_original_fields
 BEFORE UPDATE ON tasks
 FOR EACH ROW
 EXECUTE FUNCTION protect_task_original_fields();
+
+REVOKE ALL ON FUNCTION public.protect_task_original_fields()
+FROM PUBLIC;
