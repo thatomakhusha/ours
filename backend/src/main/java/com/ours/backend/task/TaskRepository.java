@@ -31,4 +31,22 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
         LIMIT 1
         """, nativeQuery = true)
     Optional<Task> findTopPersonalTask(@Param("ownerId") Long ownerId);
+
+    @Query(value = """
+        SELECT *
+        FROM tasks
+        WHERE is_shared = TRUE
+          AND is_completed = FALSE
+        ORDER BY
+            CASE priority
+                WHEN 'HIGH' THEN 1
+                WHEN 'MEDIUM' THEN 2
+                WHEN 'LOW' THEN 3
+            END ASC,
+            due_date ASC NULLS LAST,
+            created_at ASC,
+            task_id ASC
+        LIMIT 1
+        """, nativeQuery = true)
+    Optional<Task> findTopSharedTask();
 }
