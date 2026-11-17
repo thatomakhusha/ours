@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 import jakarta.validation.Valid;
@@ -176,4 +177,17 @@ public class TaskController {
         return taskMapper.toResponse(task);
     }
 
+    @DeleteMapping("/{taskId}")
+    public void deleteTask(
+            @PathVariable Long taskId,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        taskService.deleteTask(userId, taskId);
+    }
 }
