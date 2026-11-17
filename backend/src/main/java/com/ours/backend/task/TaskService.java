@@ -128,4 +128,16 @@ public class TaskService {
     public List<Task> getMyTasks(Long userId) {
         return taskRepository.findByOwnerIdAndIsSharedFalse(userId);
     }
+
+    public List<Task> getPartnerTasks(Long userId) {
+        List<User> partners = userRepository.findByUserIdNot(userId);
+
+        if (partners.size() != 1) {
+            throw new IllegalStateException("Could not identify the partner account.");
+        }
+
+        Long partnerId = partners.get(0).getUserId();
+
+        return taskRepository.findByOwnerIdAndIsSharedFalse(partnerId);
+    }
 }
