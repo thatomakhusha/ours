@@ -140,4 +140,8 @@ public class TaskService {
 
         return taskRepository.findByOwnerIdAndIsSharedFalse(partnerId);
     }
+
+    public List<Task> getSharedTasks() {
+        return taskRepository.findByIsSharedTrue();
+    }
 }
