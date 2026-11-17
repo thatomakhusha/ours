@@ -124,4 +124,12 @@ public class TaskController {
                 .map(taskMapper::toResponse)
                 .orElse(null);
     }
+
+    @GetMapping("/top/shared")
+    public TaskResponse getTopSharedTask() {
+
+        return taskService.getTopSharedTask()
+                .map(taskMapper::toResponse)
+                .orElse(null);
+    }
 }
