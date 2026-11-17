@@ -110,4 +110,18 @@ public class TaskController {
                 .map(taskMapper::toResponse)
                 .toList();
     }
+
+    @GetMapping("/top/personal")
+    public TaskResponse getTopPersonalTask(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        return taskService.getTopPersonalTask(userId)
+                .map(taskMapper::toResponse)
+                .orElse(null);
+    }
 }
