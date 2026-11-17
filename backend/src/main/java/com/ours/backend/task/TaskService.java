@@ -152,4 +152,63 @@ public class TaskService {
     public Optional<Task> getTopSharedTask(){
         return taskRepository.findTopSharedTask();
     }
+
+    private Task findTaskForEditing(Long userId, Long taskId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("Task not found."));
+
+        if (!task.getIsShared() && !task.getOwnerId().equals(user.getUserId())) {
+            throw new IllegalStateException("You are not allowed to edit this task.");
+        }
+
+        return task;
+    }
+
+    public Task updateTask(Long userId, Long taskId, String title,
+                           String description, String priority, LocalDate dueDate) {
+
+        Task task = findTaskForEditing(userId, taskId);
+
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Task title cannot be empty.");
+        }
+
+        String validatedTitle = title.trim();
+
+        if (validatedTitle.length() > 150) {
+            throw new IllegalArgumentException("Task title cannot exceed 150 characters.");
+        }
+
+        String validatedDescription = null;
+
+        if (description != null) {
+            validatedDescription = description.trim();
+
+            if (validatedDescription.isEmpty()) {
+                throw new IllegalArgumentException("Task description cannot be empty.");
+            }
+        }
+
+        String validatedPriority = (priority == null || priority.isBlank())
+                ? "MEDIUM"
+                : priority.trim().toUpperCase(Locale.ROOT);
+
+        if (!validatedPriority.equals("HIGH")
+                && !validatedPriority.equals("MEDIUM")
+                && !validatedPriority.equals("LOW")) {
+            throw new IllegalArgumentException("Priority must be HIGH, MEDIUM or LOW.");
+        }
+
+        task.setTitle(validatedTitle);
+        task.setDescription(validatedDescription);
+        task.setPriority(validatedPriority);
+        task.setDueDate(dueDate);
+        task.setUpdatedBy(userId);
+
+        return taskRepository.save(task);
+    }
 }
