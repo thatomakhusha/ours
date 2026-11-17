@@ -45,5 +45,25 @@ public class TaskController {
         return taskMapper.toResponse(task);
     }
 
+    @PostMapping("/shared")
+    public TaskResponse createSharedTask(
+            @Valid @RequestBody CreateTaskRequest request,
+            Authentication authentication) {
 
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        Task task = taskService.createSharedTask(
+                userId,
+                request.getTitle(),
+                request.getDescription(),
+                request.getPriority(),
+                request.getDueDate()
+        );
+
+        return taskMapper.toResponse(task);
+    }
 }
