@@ -5,6 +5,8 @@ import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -207,6 +209,23 @@ public class TaskService {
         task.setDescription(validatedDescription);
         task.setPriority(validatedPriority);
         task.setDueDate(dueDate);
+        task.setUpdatedBy(userId);
+
+        return taskRepository.save(task);
+    }
+
+    public Task toggleTaskCompletion(Long userId, Long taskId) {
+
+        Task task = findTaskForEditing(userId, taskId);
+
+        if (task.getIsCompleted()) {
+            task.setIsCompleted(false);
+            task.setCompletedAt(null);
+        } else {
+            task.setIsCompleted(true);
+            task.setCompletedAt(OffsetDateTime.now());
+        }
+
         task.setUpdatedBy(userId);
 
         return taskRepository.save(task);
