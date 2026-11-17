@@ -84,4 +84,20 @@ public class TaskController {
                 .map(taskMapper::toResponse)
                 .toList();
     }
+
+    @GetMapping("/partner")
+    public List<TaskResponse> getPartnerTasks(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        List<Task> tasks = taskService.getPartnerTasks(userId);
+
+        return tasks.stream()
+                .map(taskMapper::toResponse)
+                .toList();
+    }
 }
