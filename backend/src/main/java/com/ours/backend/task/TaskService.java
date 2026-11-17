@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -143,5 +144,12 @@ public class TaskService {
 
     public List<Task> getSharedTasks() {
         return taskRepository.findByIsSharedTrue();
+    }
+
+    public Optional<Task> getTopPersonalTask(Long userId){
+        return taskRepository.findTopPersonalTask(userId);
+    }
+    public Optional<Task> getTopSharedTask(){
+        return taskRepository.findTopSharedTask();
     }
 }
