@@ -230,4 +230,11 @@ public class TaskService {
 
         return taskRepository.save(task);
     }
+
+    public void deleteTask(Long userId, Long taskId) {
+
+        Task task = findTaskForEditing(userId, taskId);
+
+        taskRepository.delete(task);
+    }
 }
