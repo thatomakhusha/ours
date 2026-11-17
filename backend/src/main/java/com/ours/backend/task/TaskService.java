@@ -5,6 +5,7 @@ import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -122,5 +123,9 @@ public class TaskService {
         task.setUpdatedBy(user.getUserId());
 
         return taskRepository.save(task);
+    }
+
+    public List<Task> getMyTasks(Long userId) {
+        return taskRepository.findByOwnerIdAndIsSharedFalse(userId);
     }
 }
