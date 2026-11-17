@@ -162,4 +162,15 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    public User updateDisplayName(Long userId, String newDisplayName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+
+        String validatedDisplayName = validateName(newDisplayName, "Display name");
+
+        user.setDisplayName(validatedDisplayName);
+
+        return userRepository.save(user);
+    }
 }
