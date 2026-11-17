@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import jakarta.validation.Valid;
@@ -132,4 +134,29 @@ public class TaskController {
                 .map(taskMapper::toResponse)
                 .orElse(null);
     }
+
+    @PutMapping("/{taskId}")
+    public TaskResponse updateTask(
+            @PathVariable Long taskId,
+            @Valid @RequestBody UpdateTaskRequest request,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        Task task = taskService.updateTask(
+                userId,
+                taskId,
+                request.getTitle(),
+                request.getDescription(),
+                request.getPriority(),
+                request.getDueDate()
+        );
+
+        return taskMapper.toResponse(task);
+    }
+
 }
