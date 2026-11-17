@@ -7,4 +7,6 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByOwnerIdAndIsSharedFalse(Long ownerId);
+
+    List<Task> findByIsSharedTrue();
 }
