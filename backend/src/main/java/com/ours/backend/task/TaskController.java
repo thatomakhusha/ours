@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import com.ours.backend.user.UserService;
@@ -65,5 +67,21 @@ public class TaskController {
         );
 
         return taskMapper.toResponse(task);
+    }
+
+    @GetMapping("/mine")
+    public List<TaskResponse> getMyTasks(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        List<Task> tasks = taskService.getMyTasks(userId);
+
+        return tasks.stream()
+                .map(taskMapper::toResponse)
+                .toList();
     }
 }
