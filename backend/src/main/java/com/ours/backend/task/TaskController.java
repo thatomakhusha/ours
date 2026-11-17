@@ -100,4 +100,14 @@ public class TaskController {
                 .map(taskMapper::toResponse)
                 .toList();
     }
+
+    @GetMapping("/shared")
+    public List<TaskResponse> getSharedTasks() {
+
+        List<Task> tasks = taskService.getSharedTasks();
+
+        return tasks.stream()
+                .map(taskMapper::toResponse)
+                .toList();
+    }
 }
