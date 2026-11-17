@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.util.List;
 import jakarta.validation.Valid;
@@ -155,6 +156,22 @@ public class TaskController {
                 request.getPriority(),
                 request.getDueDate()
         );
+
+        return taskMapper.toResponse(task);
+    }
+
+    @PatchMapping("/{taskId}/completion")
+    public TaskResponse toggleTaskCompletion(
+            @PathVariable Long taskId,
+            Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        Task task = taskService.toggleTaskCompletion(userId, taskId);
 
         return taskMapper.toResponse(task);
     }
