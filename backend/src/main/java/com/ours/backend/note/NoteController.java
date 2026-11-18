@@ -1,13 +1,17 @@
 package com.ours.backend.note;
 
 import com.ours.backend.user.UserService;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.Authentication;
+
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -37,5 +41,20 @@ public class NoteController {
         Note note = noteService.createNote(userId, request.getContent());
 
         return noteMapper.toResponse(note);
+    }
+
+    @GetMapping("/sent")
+    public List<NoteResponse> getSentNotes(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        return noteService.getSentNotes(userId)
+                .stream()
+                .map(noteMapper::toResponse)
+                .toList();
     }
 }
