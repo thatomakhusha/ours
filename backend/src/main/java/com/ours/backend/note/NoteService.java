@@ -3,6 +3,7 @@ package com.ours.backend.note;
 import com.ours.backend.user.User;
 import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import java.util.List;
 
@@ -44,5 +45,17 @@ public class NoteService {
         note.setContent(content.trim());
 
         return noteRepository.save(note);
+    }
+
+    public List<Note> getSentNotes(Long userId){
+        return noteRepository.findBySenderId(userId);
+    }
+
+    public List<Note> getReceivedNotes(Long userId) {
+        return noteRepository.findByRecipientId(userId);
+    }
+
+    public Optional<Note> getLatestReceivedNote(Long userId) {
+        return noteRepository.findFirstByRecipientIdOrderByCreatedAtDescNoteIdDesc(userId);
     }
 }
