@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import org.springframework.security.core.Authentication;
 
 import jakarta.validation.Valid;
@@ -85,5 +88,26 @@ public class NoteController {
         return noteService.getLatestReceivedNote(userId)
                 .map(noteMapper::toResponse)
                 .orElse(null);
+    }
+
+    @PutMapping("/{noteId}")
+    public NoteResponse updateNote(
+            @PathVariable Long noteId,
+            @Valid @RequestBody UpdateNoteRequest request,
+            Authentication authentication
+    ) {
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        Note note = noteService.updateNote(
+                noteId,
+                userId,
+                request.getContent()
+        );
+
+        return noteMapper.toResponse(note);
     }
 }
