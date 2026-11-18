@@ -58,4 +58,22 @@ public class NoteService {
     public Optional<Note> getLatestReceivedNote(Long userId) {
         return noteRepository.findFirstByRecipientIdOrderByCreatedAtDescNoteIdDesc(userId);
     }
+
+    public Note updateNote(Long noteId, Long senderId, String content) {
+        if (noteId == null || senderId == null) {
+            throw new IllegalArgumentException("Note ID and sender ID are required.");
+        }
+
+        if (content == null || content.isBlank()) {
+            throw new IllegalArgumentException("Note content cannot be empty.");
+        }
+
+        Note note = noteRepository.findByNoteIdAndSenderId(noteId, senderId)
+                .orElseThrow(() -> new IllegalArgumentException("Note not found or you are not authorised to edit it."));
+
+        note.setContent(content.trim());
+        note.setEdited(true);
+
+        return noteRepository.save(note);
+    }
 }
