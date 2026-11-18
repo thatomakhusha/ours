@@ -76,4 +76,16 @@ public class NoteService {
 
         return noteRepository.save(note);
     }
+
+    public void deleteNote(Long userId, Long noteId) {
+
+        if (userId == null || noteId == null) {
+            throw new IllegalArgumentException("User ID and note ID are required.");
+        }
+
+        Note note = noteRepository.findByNoteIdAndSenderId(noteId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Note not found or you are not authorised to delete it."));
+
+        noteRepository.delete(note);
+    }
 }
