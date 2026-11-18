@@ -72,4 +72,18 @@ public class NoteController {
                 .map(noteMapper::toResponse)
                 .toList();
     }
+
+    @GetMapping("/latest")
+    public NoteResponse getLatestReceivedNote(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        return noteService.getLatestReceivedNote(userId)
+                .map(noteMapper::toResponse)
+                .orElse(null);
+    }
 }
