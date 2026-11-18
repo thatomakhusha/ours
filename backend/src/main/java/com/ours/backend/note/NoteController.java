@@ -57,4 +57,19 @@ public class NoteController {
                 .map(noteMapper::toResponse)
                 .toList();
     }
+
+    @GetMapping("/received")
+    public List<NoteResponse> getReceivedNotes(Authentication authentication) {
+
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        return noteService.getReceivedNotes(userId)
+                .stream()
+                .map(noteMapper::toResponse)
+                .toList();
+    }
 }
