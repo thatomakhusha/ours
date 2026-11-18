@@ -1,15 +1,7 @@
 package com.ours.backend.note;
 
 import com.ours.backend.user.UserService;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
 import jakarta.validation.Valid;
@@ -109,5 +101,18 @@ public class NoteController {
         );
 
         return noteMapper.toResponse(note);
+    }
+
+    @DeleteMapping("/{noteId}")
+    public void deleteNote(
+            @PathVariable Long noteId,
+            Authentication authentication) {
+        String email = authentication.getName();
+
+        Long userId = userService.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .getUserId();
+
+        noteService.deleteNote(userId, noteId);
     }
 }
