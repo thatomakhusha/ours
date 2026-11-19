@@ -63,7 +63,9 @@ GRANT INSERT (
     first_name,
     display_name,
     email,
-    password_hash
+    password_hash,
+    must_change_password,
+    password_changed_at
 )
 ON TABLE public.users
 TO ours_user;
