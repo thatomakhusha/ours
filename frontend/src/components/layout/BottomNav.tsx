@@ -13,9 +13,9 @@ type Tab = {
 };
 
 const tabs: Tab[] = [
-  { label: "Home", href: "/", icon: House, matches: (p) => p === "/" },
-  { label: "My tasks", href: "/tasks", icon: Check, matches: (p) => p.startsWith("/tasks") },
-  { label: "Ours", href: "/ours", icon: Heart, matches: (p) => p.startsWith("/ours") },
+  { label: "Home", href: "/home", icon: House, matches: (p) => p.startsWith("/home") },
+  { label: "My tasks", href: "/my-tasks", icon: Check, matches: (p) => p.startsWith("/my-tasks") || p.startsWith("/partner-tasks") },
+  { label: "Ours", href: "/shared-tasks", icon: Heart, matches: (p) => p.startsWith("/shared-tasks") },
   { label: "Notes", href: "/notes", icon: StickyNote, matches: (p) => p.startsWith("/notes") },
 ];
 
