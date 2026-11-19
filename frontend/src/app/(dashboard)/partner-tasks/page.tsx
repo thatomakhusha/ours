@@ -1,3 +1,11 @@
+import PageHeading from "@/components/layout/PageHeading";
+
 export default function PartnerTasks() {
-  return <h1 className="font-display text-4xl font-semibold">Amai's Tasks/ Thato's Tasks</h1>;
+  return (
+    <PageHeading
+      eyebrow="A little peek"
+      title="... tasks"
+      subtitle="View only — no sneaky ticking."
+    />
+  );
 }

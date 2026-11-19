@@ -1,3 +1,11 @@
+import PageHeading from "@/components/layout/PageHeading";
+
 export default function Notes() {
-  return <h1 className="font-display text-4xl font-semibold">Notes</h1>;
+  return (
+    <PageHeading
+      eyebrow="Left with love"
+      title="Notes"
+      subtitle="Little things worth saying."
+    />
+  );
 }

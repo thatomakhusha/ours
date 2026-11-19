@@ -1,3 +1,11 @@
-export default function OurTasks() {
-  return <h1 className="font-display text-4xl font-semibold">Our tasks</h1>;
+import PageHeading from "@/components/layout/PageHeading";
+
+export default function SharedTasks() {
+  return (
+    <PageHeading
+      eyebrow="Better together"
+      title="Our tasks"
+      subtitle="The list we share, the life we make."
+    />
+  );
 }
