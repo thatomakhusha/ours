@@ -73,8 +73,10 @@ public class GlobalExceptionHandler {
 
         String message = exception.getBindingResult()
                 .getFieldErrors()
-                .get(0)
-                .getDefaultMessage();
+                .stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage())
+                .orElse("Invalid request data.");
 
         return createErrorResponse(
                 HttpStatus.BAD_REQUEST,
