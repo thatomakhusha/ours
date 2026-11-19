@@ -1,9 +1,9 @@
-
 @import "tailwindcss";
 
 :root {
   --background: #F6F4EC;
   --foreground: #303A32;
+  --muted: #5E6A60;
 
   --primary: #496B50;
   --primary-foreground: #FFFFFF;
@@ -20,11 +20,23 @@
   --border: #D9C7AE;
   --input: #D9C7AE;
   --ring: #496B50;
+
+  --note-hers: #F6E7B4;
+  --note-his: #F2D4CC;
+  --tape: #91A98C;
+
+  --high-soft: #F2D4CC;
+  --high-ink: #7A3322;
+  --medium-soft: #F3E3B0;
+  --medium-ink: #6B4E0E;
+  --low-soft: #E1EADC;
+  --low-ink: #2F4A36;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
@@ -42,8 +54,20 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-mono: var(--font-geist-mono);
+  --color-note-hers: var(--note-hers);
+  --color-note-his: var(--note-his);
+  --color-tape: var(--tape);
+
+  --color-high-soft: var(--high-soft);
+  --color-high-ink: var(--high-ink);
+  --color-medium-soft: var(--medium-soft);
+  --color-medium-ink: var(--medium-ink);
+  --color-low-soft: var(--low-soft);
+  --color-low-ink: var(--low-ink);
+
+  --font-sans: var(--font-nunito), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-hand: var(--font-caveat), "Segoe Print", cursive;
 }
 
 * {
@@ -53,5 +77,13 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-nunito), Arial, Helvetica, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
