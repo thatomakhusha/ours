@@ -26,7 +26,7 @@ public class TaskService {
 
     public Task createPersonalTask(Long userId, String title, String description, String priority, LocalDate dueDate) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Task title cannot be empty.");
@@ -79,7 +79,7 @@ public class TaskService {
 
     public Task createSharedTask(Long userId, String title, String description, String priority, LocalDate dueDate) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Task title cannot be empty.");
@@ -160,7 +160,7 @@ public class TaskService {
     private Task findTaskForEditing(Long userId, Long taskId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NotFoundException("Task not found."));
