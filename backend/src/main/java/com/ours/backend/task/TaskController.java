@@ -14,6 +14,7 @@ import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import com.ours.backend.user.UserService;
+import com.ours.backend.common.NotFoundException;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -37,7 +38,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Task task = taskService.createPersonalTask(
@@ -59,7 +60,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Task task = taskService.createSharedTask(
@@ -79,7 +80,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         List<Task> tasks = taskService.getMyTasks(userId);
@@ -95,7 +96,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         List<Task> tasks = taskService.getPartnerTasks(userId);
@@ -121,7 +122,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         return taskService.getTopPersonalTask(userId)
@@ -146,7 +147,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Task task = taskService.updateTask(
@@ -169,7 +170,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Task task = taskService.toggleTaskCompletion(userId, taskId);
@@ -185,7 +186,7 @@ public class TaskController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         taskService.deleteTask(userId, taskId);
