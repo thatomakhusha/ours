@@ -29,12 +29,23 @@ public class JwtService {
         this.jwtExpiration = jwtExpiration;
     }
 
-    public String generateToken(String email, boolean mustChangePassword) {
+    public String generateToken(User user) {
         long issuedAtMillis = System.currentTimeMillis();
 
+        if (user.getPasswordChangedAt() != null) {
+            long passwordChangedAtMillis = user.getPasswordChangedAt()
+                    .toInstant()
+                    .toEpochMilli();
+
+            issuedAtMillis = Math.max(
+                    issuedAtMillis,
+                    passwordChangedAtMillis + 1
+            );
+        }
+
         return Jwts.builder()
-                .subject(email)
-                .claim("mustChangePassword", mustChangePassword)
+                .subject(user.getEmail())
+                .claim("mustChangePassword", user.isMustChangePassword())
                 .claim("issuedAtMillis", issuedAtMillis)
                 .issuedAt(new Date(issuedAtMillis))
                 .expiration(new Date(issuedAtMillis + jwtExpiration))
