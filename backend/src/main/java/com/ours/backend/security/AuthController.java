@@ -6,9 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import org.springframework.security.core.Authentication;
@@ -32,7 +32,6 @@ public class AuthController {
 
     @PostMapping("/api/auth/login")
     public AuthResponse login(@Valid @RequestBody LoginRequest request) {
-
         User user = userService.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED,
@@ -71,20 +70,11 @@ public class AuthController {
                         "User account not found."
                 ));
 
-        User updatedUser;
-
-        try {
-            updatedUser = userService.changePassword(
-                    currentUser.getUserId(),
-                    request.getCurrentPassword(),
-                    request.getNewPassword()
-            );
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    exception.getMessage()
-            );
-        }
+        User updatedUser = userService.changePassword(
+                currentUser.getUserId(),
+                request.getCurrentPassword(),
+                request.getNewPassword()
+        );
 
         String token = jwtService.generateToken(updatedUser);
 
