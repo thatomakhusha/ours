@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 
+import com.ours.backend.common.ConflictException;
+
 @Service
 public class UserService {
 
@@ -67,13 +69,13 @@ public class UserService {
         long userCount = userRepository.count();
 
         if (userCount >= 2) {
-            throw new IllegalStateException("Ours already has its maximum of two user accounts.");
+            throw new ConflictException("Ours already has its maximum of two user accounts.");
         }
     }
 
     private void ensureEmailNotRegistered(String email) {
         if (emailExists(email)) {
-            throw new IllegalStateException("A user with this email address already exists.");
+            throw new ConflictException("A user with this email address already exists.");
         }
     }
 
