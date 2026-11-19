@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import java.util.List;
 
+import com.ours.backend.common.ForbiddenException;
+
 @Service
 public class NoteService {
 
@@ -69,7 +71,7 @@ public class NoteService {
         }
 
         Note note = noteRepository.findByNoteIdAndSenderId(noteId, senderId)
-                .orElseThrow(() -> new IllegalStateException("Note not found or you are not authorised to edit it."));
+                .orElseThrow(() -> new ForbiddenException("Note not found or you are not authorised to edit it."));
 
         note.setContent(content.trim());
         note.setEdited(true);
@@ -84,7 +86,7 @@ public class NoteService {
         }
 
         Note note = noteRepository.findByNoteIdAndSenderId(noteId, userId)
-                .orElseThrow(() -> new IllegalStateException("Note not found or you are not authorised to delete it."));
+                .orElseThrow(() -> new ForbiddenException("Note not found or you are not authorised to delete it."));
 
         noteRepository.delete(note);
     }
