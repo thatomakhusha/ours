@@ -1,5 +1,6 @@
 package com.ours.backend.task;
 
+import com.ours.backend.common.ForbiddenException;
 import com.ours.backend.user.User;
 import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -164,7 +165,7 @@ public class TaskService {
                 .orElseThrow(() -> new IllegalArgumentException("Task not found."));
 
         if (!task.getIsShared() && !task.getOwnerId().equals(user.getUserId())) {
-            throw new IllegalStateException("You are not allowed to edit this task.");
+            throw new ForbiddenException("You are not allowed to edit this task.");
         }
 
         return task;
