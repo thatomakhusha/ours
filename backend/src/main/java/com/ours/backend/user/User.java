@@ -15,13 +15,13 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Column(name = "first_name", nullable = false, length = 50, updatable = false)
     private String firstName;
 
     @Column(name = "display_name", nullable = false, length = 50)
     private String displayName;
 
-    @Column(name = "email", nullable = false, length = 255)
+    @Column(name = "email", nullable = false, length = 255, updatable = false)
     private String email;
 
     @Column(name = "password_hash", nullable = false, length = 255)
@@ -34,7 +34,7 @@ public class User {
     private OffsetDateTime passwordChangedAt;
 
     @Generated(event = EventType.INSERT)
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
     public Long getUserId() {
