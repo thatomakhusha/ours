@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.ours.backend.common.NotFoundException;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -31,7 +33,7 @@ public class UserController {
                         user.getEmail(),
                         user.getCreatedAt()
                 ))
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
     }
 
     @PatchMapping("/me/display-name")
@@ -40,7 +42,7 @@ public class UserController {
             @Valid @RequestBody UpdateDisplayNameRequest request
     ) {
         User currentUser = userService.findByEmail(authentication.getName())
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         User updatedUser = userService.updateDisplayName(
                 currentUser.getUserId(),
