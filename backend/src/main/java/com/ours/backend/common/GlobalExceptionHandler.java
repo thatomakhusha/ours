@@ -30,13 +30,25 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(
-            IllegalStateException exception,
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbiddenException(
+            ForbiddenException exception,
             HttpServletRequest request) {
 
         return createErrorResponse(
                 HttpStatus.FORBIDDEN,
+                exception.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(
+            ConflictException exception,
+            HttpServletRequest request) {
+
+        return createErrorResponse(
+                HttpStatus.CONFLICT,
                 exception.getMessage(),
                 request
         );
