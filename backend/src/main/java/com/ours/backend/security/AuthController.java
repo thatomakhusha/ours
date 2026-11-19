@@ -60,7 +60,7 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/change-password")
+    @PostMapping("/api/auth/change-password")
     public AuthResponse changePassword(
             @Valid @RequestBody ChangePasswordRequest request,
             Authentication authentication
