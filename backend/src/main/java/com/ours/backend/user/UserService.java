@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 
 import com.ours.backend.common.ConflictException;
 
+import com.ours.backend.common.NotFoundException;
+
 @Service
 public class UserService {
 
@@ -142,7 +144,7 @@ public class UserService {
 
     public User changePassword(Long userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         if (currentPassword == null || currentPassword.isBlank()) {
             throw new IllegalArgumentException("Current password cannot be empty.");
@@ -167,7 +169,7 @@ public class UserService {
 
     public User updateDisplayName(Long userId, String newDisplayName) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."));
+                .orElseThrow(() -> new NotFoundException("User account not found."));
 
         String validatedDisplayName = validateName(newDisplayName, "Display name");
 
