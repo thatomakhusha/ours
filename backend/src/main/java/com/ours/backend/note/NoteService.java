@@ -1,5 +1,6 @@
 package com.ours.backend.note;
 
+import com.ours.backend.common.NotFoundException;
 import com.ours.backend.user.User;
 import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class NoteService {
         }
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new IllegalArgumentException("Sender account not found."));
+                .orElseThrow(() -> new NotFoundException("Sender account not found."));
 
         List<User> partners = userRepository.findByUserIdNot(senderId);
 
