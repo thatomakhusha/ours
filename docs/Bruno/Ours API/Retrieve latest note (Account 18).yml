@@ -1,0 +1,18 @@
+info:
+  name: Retrieve latest note (Account 18)
+  type: http
+  seq: 28
+
+http:
+  method: GET
+  url: http://localhost:8080/api/notes/latest
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

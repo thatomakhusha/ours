@@ -1,0 +1,25 @@
+info:
+  name: Create a note (Account 17)
+  type: http
+  seq: 25
+
+http:
+  method: POST
+  url: http://localhost:8080/api/notes
+  body:
+    type: json
+    data: |-
+      {
+        "recipientId": 18,
+        "content": "I hope you're having a lovely day. ❤️"
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

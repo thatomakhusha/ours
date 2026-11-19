@@ -1,0 +1,18 @@
+info:
+  name: Mark Task 7 as Incomplete Again
+  type: http
+  seq: 20
+
+http:
+  method: PATCH
+  url: http://localhost:8080/api/tasks/7/completion
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

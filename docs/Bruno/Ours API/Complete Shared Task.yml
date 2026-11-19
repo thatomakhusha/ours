@@ -1,0 +1,18 @@
+info:
+  name: Complete Shared Task
+  type: http
+  seq: 13
+
+http:
+  method: PATCH
+  url: http://localhost:8080/api/tasks/9/completion
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

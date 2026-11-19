@@ -1,0 +1,24 @@
+info:
+  name: Unauthorised note edit
+  type: http
+  seq: 36
+
+http:
+  method: PUT
+  url: http://localhost:8080/api/notes/5
+  body:
+    type: json
+    data: |-
+      {
+        "content": "Trying to edit someone else's note."
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

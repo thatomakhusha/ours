@@ -1,0 +1,27 @@
+info:
+  name: Update Shared Task (Account 18)
+  type: http
+  seq: 12
+
+http:
+  method: PUT
+  url: http://localhost:8080/api/tasks/9
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Organise Christmas celebration",
+        "description": "Plan food, decorations, activities and gifts together.",
+        "priority": "HIGH",
+        "dueDate": "2026-12-20"
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -1,0 +1,27 @@
+info:
+  name: Create Shared Task
+  type: http
+  seq: 10
+
+http:
+  method: POST
+  url: http://localhost:8080/api/tasks/shared
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Organise Christmas celebration",
+        "description": "Plan food, decorations and activities together.",
+        "priority": "HIGH",
+        "dueDate": "2026-12-20"
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

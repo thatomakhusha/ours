@@ -1,0 +1,18 @@
+info:
+  name: Delete Personal Task (Account 17)
+  type: http
+  seq: 21
+
+http:
+  method: DELETE
+  url: http://localhost:8080/api/tasks/7
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

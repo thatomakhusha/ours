@@ -1,0 +1,18 @@
+info:
+  name: Prevent recipient from deleting a note
+  type: http
+  seq: 31
+
+http:
+  method: DELETE
+  url: http://localhost:8080/api/notes/4
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

@@ -1,0 +1,18 @@
+info:
+  name: Test unauthorised deletion
+  type: http
+  seq: 37
+
+http:
+  method: DELETE
+  url: http://localhost:8080/api/notes/5
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

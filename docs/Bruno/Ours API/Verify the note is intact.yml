@@ -1,0 +1,18 @@
+info:
+  name: Verify the note is intact
+  type: http
+  seq: 38
+
+http:
+  method: GET
+  url: http://localhost:8080/api/notes/received
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

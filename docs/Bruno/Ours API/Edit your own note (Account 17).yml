@@ -1,0 +1,24 @@
+info:
+  name: Edit your own note (Account 17)
+  type: http
+  seq: 29
+
+http:
+  method: PUT
+  url: http://localhost:8080/api/notes/4
+  body:
+    type: json
+    data: |-
+      {
+        "content": "I hope you're having a lovely day. Can't wait to see you! ❤️"
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

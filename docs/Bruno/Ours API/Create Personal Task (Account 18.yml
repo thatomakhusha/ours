@@ -1,0 +1,27 @@
+info:
+  name: Create Personal Task (Account 18
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: http://localhost:8080/api/tasks/personal
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Plan weekend activities",
+        "description": "Discuss and organise weekend plans.",
+        "priority": "MEDIUM",
+        "dueDate": "2026-11-28"
+      }
+  auth:
+    type: bearer
+    token: "{{accessToken}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
