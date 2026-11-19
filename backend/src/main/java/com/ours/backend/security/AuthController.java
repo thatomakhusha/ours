@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.security.core.Authentication;
+
 @RestController
 public class AuthController {
 
@@ -55,6 +57,34 @@ public class AuthController {
                 user.getUserId(),
                 user.getEmail(),
                 user.isMustChangePassword()
+        );
+    }
+
+    @PostMapping("/change-password")
+    public AuthResponse changePassword(
+            @Valid @RequestBody ChangePasswordRequest request,
+            Authentication authentication
+    ) {
+        User currentUser = userService.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "User account not found."
+                ));
+
+        User updatedUser = userService.changePassword(
+                currentUser.getUserId(),
+                request.getCurrentPassword(),
+                request.getNewPassword()
+        );
+
+        String token = jwtService.generateToken(updatedUser);
+
+        return new AuthResponse(
+                token,
+                "Bearer",
+                updatedUser.getUserId(),
+                updatedUser.getEmail(),
+                updatedUser.isMustChangePassword()
         );
     }
 }
