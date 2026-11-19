@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import com.ours.backend.common.NotFoundException;
 
 @RestController
 @RequestMapping("/api/notes")
@@ -30,7 +31,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Note note = noteService.createNote(userId, request.getContent());
@@ -44,7 +45,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         return noteService.getSentNotes(userId)
@@ -59,7 +60,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         return noteService.getReceivedNotes(userId)
@@ -74,7 +75,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         return noteService.getLatestReceivedNote(userId)
@@ -91,7 +92,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         Note note = noteService.updateNote(
@@ -110,7 +111,7 @@ public class NoteController {
         String email = authentication.getName();
 
         Long userId = userService.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User account not found."))
+                .orElseThrow(() -> new NotFoundException("User account not found."))
                 .getUserId();
 
         noteService.deleteNote(userId, noteId);
