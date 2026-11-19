@@ -71,11 +71,20 @@ public class AuthController {
                         "User account not found."
                 ));
 
-        User updatedUser = userService.changePassword(
-                currentUser.getUserId(),
-                request.getCurrentPassword(),
-                request.getNewPassword()
-        );
+        User updatedUser;
+
+        try {
+            updatedUser = userService.changePassword(
+                    currentUser.getUserId(),
+                    request.getCurrentPassword(),
+                    request.getNewPassword()
+            );
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    exception.getMessage()
+            );
+        }
 
         String token = jwtService.generateToken(updatedUser);
 
