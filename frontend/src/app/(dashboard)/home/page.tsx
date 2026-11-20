@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import PageHeading from "@/components/layout/PageHeading";
 import { getCurrentUser } from "@/lib/auth/auth";
-import type { CurrentUser } from "@/types/user";
+import type { CurrentUser } from "@/types/users";
 
 export default function HomePage() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -22,7 +22,12 @@ export default function HomePage() {
 
   return (
     <PageHeading
-      eyebrow="today's date"
+      eyebrow={new Date().toLocaleDateString("en-ZA", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).toUpperCase()}
       title={`${greeting}, ${currentUser?.displayName || "..."}`}
       subtitle="Here's what's happening in your little world."
     />
