@@ -11,32 +11,75 @@ export class ApiError extends Error {
   }
 }
 
+function getCsrfCookie(): string | null {
+  if (typeof document === "undefined") {
+    return null;
+  }
+
+  const cookie = document.cookie
+    .split("; ")
+    .find((item) => item.startsWith("XSRF-TOKEN="));
+
+  return cookie
+    ? decodeURIComponent(cookie.substring("XSRF-TOKEN=".length))
+    : null;
+}
+
+async function getCsrfToken(): Promise<string> {
+  let csrfToken = getCsrfCookie();
+
+  if (!csrfToken) {
+    if (!API_BASE_URL) {
+      throw new Error("NEXT_PUBLIC_API_URL is not configured.");
+    }
+
+    await fetch(`${API_BASE_URL}/api/auth/csrf`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    csrfToken = getCsrfCookie();
+  }
+
+  if (!csrfToken) {
+    throw new Error("Unable to retrieve the CSRF token.");
+  }
+
+  return csrfToken;
+}
+
 export async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {},
-  token?: string
+  options: RequestInit = {}
 ): Promise<T> {
   if (!API_BASE_URL) {
     throw new Error("NEXT_PUBLIC_API_URL is not configured.");
   }
 
+  const method = (options.method ?? "GET").toUpperCase();
   const headers = new Headers(options.headers);
 
   if (options.body && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
 
-  if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
-  }
-
   headers.set("Accept", "application/json");
+
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
+    const csrfToken = await getCsrfToken();
+    headers.set("X-XSRF-TOKEN", csrfToken);
+  }
 
   const response = await fetch(
     `${API_BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`,
     {
       ...options,
+      method,
       headers,
+      credentials: "include",
     }
   );
 
