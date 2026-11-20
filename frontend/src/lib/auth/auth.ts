@@ -7,6 +7,8 @@ import type {
   ChangePasswordResponse,
 } from "./types";
 
+import type { CurrentUser } from "@/types/users";
+
 export async function login(
   credentials: LoginRequest
 ): Promise<LoginResponse> {
@@ -35,4 +37,8 @@ export async function logout(): Promise<void> {
   await apiRequest<void>("/api/auth/logout", {
     method: "POST",
   });
+}
+
+export async function getCurrentUser(): Promise<CurrentUser> {
+  return apiRequest<CurrentUser>("/api/users/me");
 }
