@@ -29,6 +29,10 @@ public class JwtService {
         this.jwtExpiration = jwtExpiration;
     }
 
+    public long getJwtExpiration() {
+        return jwtExpiration;
+    }
+
     public String generateToken(User user) {
         long issuedAtMillis = System.currentTimeMillis();
 
