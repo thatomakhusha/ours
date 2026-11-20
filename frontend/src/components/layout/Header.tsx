@@ -1,5 +1,8 @@
 "use client"
 
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth/auth";
+
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Heart, Lock, LogOut } from "lucide-react";
@@ -10,6 +13,20 @@ export default function Header() {
     const [open, setOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const initial = user.name[0];
+
+    const router = useRouter();
+
+    async function handleLogout() {
+        setOpen(false);
+
+        try {
+            await logout();
+            router.replace("/login");
+            router.refresh();
+        } catch {
+            console.error("Unable to log out. Please try again.");
+        }
+}
 
     useEffect(() => {
         function handlePointerDown(e: MouseEvent) {
@@ -79,6 +96,7 @@ export default function Header() {
 
                         <button
                             type="button"
+                            onClick={handleLogout}
                             className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-high-ink"
                         >
                             <LogOut size={16} />
