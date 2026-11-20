@@ -20,15 +20,19 @@ export async function login(
 }
 
 export async function changePassword(
-  credentials: ChangePasswordRequest,
-  token: string
+  credentials: ChangePasswordRequest
 ): Promise<ChangePasswordResponse> {
   return apiRequest<ChangePasswordResponse>(
     "/api/auth/change-password",
     {
       method: "POST",
       body: JSON.stringify(credentials),
-    },
-    token
+    }
   );
+}
+
+export async function logout(): Promise<void> {
+  await apiRequest<void>("/api/auth/logout", {
+    method: "POST",
+  });
 }
