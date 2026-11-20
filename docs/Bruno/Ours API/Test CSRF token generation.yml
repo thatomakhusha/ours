@@ -1,0 +1,28 @@
+info:
+  name: Test CSRF token generation
+  type: http
+  seq: 42
+
+http:
+  method: GET
+  url: http://localhost:8080/api/auth/csrf
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        const csrfToken = bru.cookies.get("XSRF-TOKEN");
+
+        if (!csrfToken) {
+            throw new Error("XSRF-TOKEN cookie was not found.");
+        }
+
+        bru.setVar("csrfToken", csrfToken);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
