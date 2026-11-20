@@ -27,7 +27,7 @@ public class SecurityConfig {
     ) throws Exception {
 
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.spa())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -49,6 +49,7 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/csrf").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
@@ -84,17 +85,19 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:3000")
+        );
 
         configuration.setAllowedMethods(
                 List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
         );
 
         configuration.setAllowedHeaders(
-                List.of("Authorization", "Content-Type")
+                List.of("Content-Type", "X-XSRF-TOKEN")
         );
 
-        configuration.setAllowCredentials(false);
+        configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
