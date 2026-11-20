@@ -1,10 +1,10 @@
-
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Heart, ChevronRight } from "lucide-react";
+
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { login } from "@/lib/auth/auth";
@@ -33,6 +33,7 @@ export default function LoginForm() {
       }
 
       router.push("/home");
+      router.refresh();
     } catch (err) {
       if (err instanceof ApiError) {
         setError(
@@ -54,7 +55,9 @@ export default function LoginForm() {
         <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-md">
           <Heart size={26} />
         </div>
+
         <h1 className="mt-4 font-display text-4xl font-semibold">Ours</h1>
+
         <p className="mt-1 text-sm text-muted">
           A little space for our life.
         </p>
@@ -64,6 +67,7 @@ export default function LoginForm() {
         <h2 className="font-display text-3xl font-semibold">
           Welcome back
         </h2>
+
         <p className="mt-2 text-sm text-muted">
           Come in, your little corner is waiting.
         </p>
