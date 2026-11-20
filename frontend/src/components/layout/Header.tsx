@@ -1,18 +1,19 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/auth/auth";
+import { logout, getCurrentUser  } from "@/lib/auth/auth";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Heart, Lock, LogOut } from "lucide-react";
 
-const user = { name: "Anna Parker", partner: "Leo" };
-
 export default function Header() {
     const [open, setOpen] = useState(false);
+    const [displayName, setDisplayName] = useState("");
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const initial = user.name[0];
+    const initial = displayName
+        ? displayName.charAt(0).toUpperCase()
+        : "?";
 
     const router = useRouter();
 
@@ -26,7 +27,29 @@ export default function Header() {
         } catch {
             console.error("Unable to log out. Please try again.");
         }
-}
+    }
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadUser() {
+            try {
+                const currentUser = await getCurrentUser();
+
+                if (isMounted) {
+                    setDisplayName(currentUser.displayName);
+                }
+            } catch (error) {
+                console.error("Unable to load user details:", error);
+            }
+        }
+
+        loadUser();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     useEffect(() => {
         function handlePointerDown(e: MouseEvent) {
@@ -78,8 +101,8 @@ export default function Header() {
                                 {initial}
                             </span>
                             <div>
-                                <p className="text-sm font-bold">{user.name}</p>
-                                <p className="text-xs text-muted">Sharing with {user.partner}</p>
+                                <p className="text-sm font-bold">{displayName || "Loading..."}</p>
+                                <p className="text-xs text-muted">Sharing with your partner</p>
                             </div>
                         </div>
 
