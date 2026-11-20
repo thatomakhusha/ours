@@ -1,3 +1,4 @@
+
 package com.ours.backend.note;
 
 import java.time.OffsetDateTime;
@@ -13,6 +14,8 @@ public class NoteResponse {
     private OffsetDateTime createdAt;
     private OffsetDateTime updatedAt;
 
+    private String senderDisplayName;
+
     public NoteResponse(
             Long noteId,
             Long senderId,
@@ -20,7 +23,8 @@ public class NoteResponse {
             String content,
             Boolean isEdited,
             OffsetDateTime createdAt,
-            OffsetDateTime updatedAt
+            OffsetDateTime updatedAt,
+            String senderDisplayName
     ) {
         this.noteId = noteId;
         this.senderId = senderId;
@@ -29,6 +33,7 @@ public class NoteResponse {
         this.isEdited = isEdited;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.senderDisplayName = senderDisplayName;
     }
 
     public Long getNoteId() {
@@ -57,5 +62,9 @@ public class NoteResponse {
 
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getSenderDisplayName() {
+        return senderDisplayName;
     }
 }
