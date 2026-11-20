@@ -5,12 +5,14 @@ import com.ours.backend.user.User;
 import com.ours.backend.user.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+
 import java.util.List;
 
 import io.jsonwebtoken.JwtException;
@@ -19,11 +21,15 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final String COOKIE_NAME = "OURS_AUTH";
+
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-
-    public JwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService,
+            UserRepository userRepository
+    ) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
@@ -34,15 +40,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader == null
-                || !authorizationHeader.regionMatches(true, 0, "Bearer ", 0, 7)) {
+        String token = null;
+
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (COOKIE_NAME.equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token == null || token.isBlank()) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        String token = authorizationHeader.substring(7);
 
         String email = null;
         User user = null;
@@ -96,6 +111,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
 }
