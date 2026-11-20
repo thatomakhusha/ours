@@ -67,6 +67,11 @@ public class UserService {
         return userRepository.findByEmailIgnoreCase(normalizedEmail);
     }
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User account not found."));
+    }
+
     private void ensureAccountLimitNotReached() {
         long userCount = userRepository.count();
 
