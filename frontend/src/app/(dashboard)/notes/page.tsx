@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import PageHeading from "@/components/layout/PageHeading";
 import StickyNote from "@/components/notes/StickyNote";
 import { getCurrentUser } from "@/lib/auth/auth";
-import { sendNote, updateNote, getSentNotes, getReceivedNotes } from "@/lib/notes/notes";
+import { sendNote, updateNote, deleteNote, getSentNotes, getReceivedNotes } from "@/lib/notes/notes";
 import type { CurrentUser } from "@/types/users";
 import type { Note } from "@/types/notes";
 
@@ -58,6 +58,31 @@ export default function Notes() {
     } catch (error) {
       console.error("Failed to update note:", error);
       setFeedback("Couldn't update your note. Please try again.");
+    }
+  }
+
+  async function handleDelete(noteId: number) {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this note? It will be permanently removed for both of you."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await deleteNote(noteId);
+
+      const [sentNotes, receivedNotes] = await Promise.all([
+        getSentNotes(),
+        getReceivedNotes(),
+      ]);
+
+      setNotes([...sentNotes, ...receivedNotes]);
+      setFeedback("Note deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      setFeedback("Couldn't delete your note. Please try again.");
     }
   }
 
@@ -171,13 +196,23 @@ export default function Notes() {
                 )}
                 {note.senderId === currentUser.userId &&
                   editingNoteId !== note.noteId && (
-                    <button
-                      type="button"
-                      onClick={() => handleEdit(note)}
-                      className="mt-2 rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
-                    >
-                      Edit
-                    </button>
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEdit(note)}
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(note.noteId)}
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
                 )}
               </div>
             ))

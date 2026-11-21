@@ -19,6 +19,12 @@ export function updateNote(noteId: number, content: string): Promise<Note> {
   });
 }
 
+export function deleteNote(noteId: number): Promise<void> {
+  return apiRequest<void>(`/api/notes/${noteId}`, {
+    method: "DELETE",
+  });
+}
+
 export function getSentNotes(): Promise<Note[]> {
   return apiRequest<Note[]>("/api/notes/sent");
 }
