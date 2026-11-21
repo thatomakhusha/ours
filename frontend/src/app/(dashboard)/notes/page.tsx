@@ -46,6 +46,14 @@ export default function Notes() {
               event.preventDefault();
               try {
                 await sendNote(message.trim());
+
+                const [sentNotes, receivedNotes] = await Promise.all([
+                  getSentNotes(),
+                  getReceivedNotes(),
+                ]);
+
+                setNotes([...sentNotes, ...receivedNotes]);
+
                 setMessage("");
                 setFeedback("Note sent successfully!");
               } catch(error) {
