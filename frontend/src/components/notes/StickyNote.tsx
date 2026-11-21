@@ -2,6 +2,8 @@ type StickyNoteProps = {
   text: string;
   author: string;
   createdAt: string;
+  isEdited: boolean;
+  updatedAt: string;
   tone?: "hers" | "his";
 };
 
@@ -47,6 +49,8 @@ export default function StickyNote({
   text,
   author,
   createdAt,
+  isEdited,
+  updatedAt,
   tone = "hers",
 }: StickyNoteProps) {
   return (
@@ -60,7 +64,8 @@ export default function StickyNote({
       <p className="font-hand text-2xl leading-snug">{text}</p>
       <div className="mt-3 flex items-center justify-between">
         <p className="text-xs text-muted">
-          {formatNoteDate(createdAt)}
+          {isEdited && "Edited "}
+          {formatNoteDate(isEdited ? updatedAt : createdAt)}
         </p>
         <p className="text-right font-hand text-lg text-muted">
           — {author}

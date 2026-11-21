@@ -6,9 +6,17 @@ type LatestNoteCardProps = {
   from: string;
   text: string;
   createdAt: string;
+  isEdited: boolean;
+  updatedAt: string;
 };
 
-export default function LatestNoteCard({ from, text, createdAt }: LatestNoteCardProps) {
+export default function LatestNoteCard({
+  from,
+  text,
+  createdAt,
+  isEdited,
+  updatedAt,
+}: LatestNoteCardProps) {
   return (
     <section className="rounded-3xl bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between">
@@ -31,7 +39,7 @@ export default function LatestNoteCard({ from, text, createdAt }: LatestNoteCard
       </div>
 
       <div className="mt-5">
-        <StickyNote text={text} author={from} createdAt={createdAt}/>
+        <StickyNote text={text} author={from} createdAt={createdAt} isEdited={isEdited} updatedAt={updatedAt}/>
       </div>
     </section>
   );

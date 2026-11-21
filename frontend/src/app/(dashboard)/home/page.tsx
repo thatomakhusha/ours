@@ -49,6 +49,8 @@ export default function HomePage() {
             from={latestNote.senderDisplayName}
             text={latestNote.content}
             createdAt={latestNote.createdAt}
+            isEdited={latestNote.isEdited}
+            updatedAt={latestNote.updatedAt}
           />
         )}
       </div>
