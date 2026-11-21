@@ -11,3 +11,11 @@ export function sendNote(content: string): Promise<Note> {
     body: JSON.stringify({ content }),
   });
 }
+
+export function getSentNotes(): Promise<Note[]> {
+  return apiRequest<Note[]>("/api/notes/sent");
+}
+
+export function getReceivedNotes(): Promise<Note[]> {
+  return apiRequest<Note[]>("/api/notes/received");
+}
