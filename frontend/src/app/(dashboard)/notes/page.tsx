@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth/auth";
 import { sendNote, updateNote, deleteNote, getSentNotes, getReceivedNotes } from "@/lib/notes/notes";
 import type { CurrentUser } from "@/types/users";
 import type { Note } from "@/types/notes";
+import { ApiError } from "@/lib/api/client";
 
 export default function Notes() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
@@ -39,6 +40,13 @@ export default function Notes() {
     setEditMessage(note.content);
   }
 
+  function canEditNote(note: Note): boolean {
+    const createdAt = new Date(note.createdAt).getTime();
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+
+    return Date.now() < createdAt + twentyFourHours;
+  }
+
   async function handleSave(noteId: number) {
     if (!editMessage.trim()) {
       return;
@@ -56,9 +64,14 @@ export default function Notes() {
       setEditingNoteId(null);
       setEditMessage("");
       setFeedback("Note updated successfully!");
-    } catch (error) {
+        } catch (error) {
       console.error("Failed to update note:", error);
-      setFeedback("Couldn't update your note. Please try again.");
+
+      if (error instanceof ApiError) {
+        setFeedback(error.message);
+      } else {
+        setFeedback("Couldn't update your note. Please try again.");
+      }
     }
   }
 
@@ -192,13 +205,15 @@ export default function Notes() {
                 {note.senderId === currentUser.userId &&
                   editingNoteId !== note.noteId && (
                     <div className="mt-2 flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleEdit(note)}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
-                      >
-                        Edit
-                      </button>
+                      {canEditNote(note) && (
+                        <button
+                          type="button"
+                          onClick={() => handleEdit(note)}
+                          className="rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10"
+                        >
+                          Edit
+                        </button>
+                      )}
 
                       <button
                         type="button"

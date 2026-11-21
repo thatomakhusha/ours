@@ -5,7 +5,7 @@ import com.ours.backend.user.User;
 import com.ours.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
-
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import com.ours.backend.common.ForbiddenException;
@@ -73,6 +73,10 @@ public class NoteService {
 
         Note note = noteRepository.findByNoteIdAndSenderId(noteId, senderId)
                 .orElseThrow(() -> new ForbiddenException("Note not found or you are not authorised to edit it."));
+
+        if (!OffsetDateTime.now().isBefore(note.getCreatedAt().plusHours(24))) {
+            throw new ForbiddenException("The 24-hour editing window for this note has expired.");
+        }
 
         note.setContent(content.trim());
         note.setEdited(true);
