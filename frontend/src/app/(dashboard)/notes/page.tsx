@@ -1,53 +1,28 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PageHeading from "@/components/layout/PageHeading";
 import StickyNote from "@/components/notes/StickyNote";
-
-type NoteItem = {
-  id: number;
-  text: string;
-  author: string;
-  tone: "hers" | "his";
-};
-
-const sampleNotes: NoteItem[] = [
-  {
-    id: 1,
-    text: "Good luck with your presentation today. You'll be brilliant (as always). Dinner's on me tonight x",
-    author: "Leo",
-    tone: "hers",
-  },
-  {
-    id: 2,
-    text: "I put the good coffee aside for your early start. Have a gentle day x",
-    author: "Anna",
-    tone: "his",
-  },
-];
+import { getCurrentUser } from "@/lib/auth/auth";
+import { getLatestReceivedNote } from "@/lib/notes/notes";
+import type { CurrentUser } from "@/types/users";
+import type { Note } from "@/types/notes";
 
 export default function Notes() {
-  const [notes, setNotes] = useState<NoteItem[]>(sampleNotes);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  const [latestNote, setLatestNote] = useState<Note | null>(null);
   const [message, setMessage] = useState("");
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useEffect(() => {
+    getCurrentUser()
+      .then(setCurrentUser)
+      .catch((error) => console.error("Failed to load user:", error));
 
-    const trimmedMessage = message.trim();
-
-    if (!trimmedMessage) return;
-
-    const newNote: NoteItem = {
-      id: Date.now(),
-      text: trimmedMessage,
-      author: "You",
-      tone: "his",
-    };
-
-    setNotes((previousNotes) => [newNote, ...previousNotes]);
-    setMessage("");
-  }
+    getLatestReceivedNote()
+      .then(setLatestNote)
+      .catch((error) => console.error("Failed to load note:", error));
+  }, []);
 
   return (
     <>
@@ -58,9 +33,12 @@ export default function Notes() {
       />
 
       <div className="space-y-8">
-        {/* Write a note */}
         <section className="rounded-3xl bg-card p-5 shadow-sm">
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+            }}
+          >
             <h2 className="font-semibold text-ink">
               Leave your partner a note
             </h2>
@@ -74,7 +52,7 @@ export default function Notes() {
               className="mt-4 w-full resize-none rounded-2xl border border-border bg-background p-4 text-sm text-ink outline-none placeholder:text-muted focus:border-primary"
             />
 
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="mt-4 flex items-center justify-between">
               <p className="text-xs text-muted">
                 It'll be signed from you.
               </p>
@@ -82,7 +60,7 @@ export default function Notes() {
               <button
                 type="submit"
                 disabled={!message.trim()}
-                className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
               >
                 Leave note
               </button>
@@ -90,16 +68,24 @@ export default function Notes() {
           </form>
         </section>
 
-        {/* Notes feed */}
         <section className="space-y-8 px-2">
-          {notes.map((note) => (
+          {latestNote && currentUser && (
             <StickyNote
-              key={note.id}
-              text={note.text}
-              author={note.author}
-              tone={note.tone}
+              text={latestNote.content}
+              author={latestNote.senderDisplayName}
+              tone={
+                latestNote.senderId === currentUser.userId
+                  ? "his"
+                  : "hers"
+              }
             />
-          ))}
+          )}
+
+          {!latestNote && (
+            <p className="py-8 text-center text-sm text-muted">
+              No notes to show just yet.
+            </p>
+          )}
         </section>
       </div>
     </>
