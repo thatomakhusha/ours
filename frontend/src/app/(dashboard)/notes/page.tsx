@@ -15,6 +15,7 @@ export default function Notes() {
   const [feedback, setFeedback] = useState("");
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [editMessage, setEditMessage] = useState("");
+  const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
 
   useEffect(() => {
       getCurrentUser()
@@ -62,14 +63,6 @@ export default function Notes() {
   }
 
   async function handleDelete(noteId: number) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this note? It will be permanently removed for both of you."
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     try {
       await deleteNote(noteId);
 
@@ -80,9 +73,11 @@ export default function Notes() {
 
       setNotes([...sentNotes, ...receivedNotes]);
       setFeedback("Note deleted successfully!");
+      setNoteToDelete(null);
     } catch (error) {
       console.error("Failed to delete note:", error);
       setFeedback("Couldn't delete your note. Please try again.");
+      setNoteToDelete(null);
     }
   }
 
@@ -207,7 +202,7 @@ export default function Notes() {
 
                       <button
                         type="button"
-                        onClick={() => handleDelete(note.noteId)}
+                        onClick={() => setNoteToDelete(note.noteId)}
                         className="rounded-lg px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
                       >
                         Delete
@@ -222,7 +217,40 @@ export default function Notes() {
             </p>
           )}
         </section>
-      </div>
+            </div>
+
+      {noteToDelete !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-3xl bg-card p-6 shadow-xl">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Delete this note?
+            </h2>
+
+            <p className="mt-3 text-sm leading-relaxed text-muted">
+              Are you sure you want to delete this note? It will be permanently
+              removed for both of you.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setNoteToDelete(null)}
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-ink"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDelete(noteToDelete)}
+                className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
+              >
+                Delete note
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
