@@ -48,6 +48,7 @@ export default function HomePage() {
           <LatestNoteCard
             from={latestNote.senderDisplayName}
             text={latestNote.content}
+            createdAt={latestNote.createdAt}
           />
         )}
       </div>

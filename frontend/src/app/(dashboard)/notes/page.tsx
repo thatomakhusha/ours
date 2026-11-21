@@ -98,6 +98,7 @@ export default function Notes() {
                 key={note.noteId}
                 text={note.content}
                 author={note.senderDisplayName}
+                createdAt={note.createdAt}
                 tone={note.senderId === currentUser.userId ? "his" : "hers"}
               />
             ))
