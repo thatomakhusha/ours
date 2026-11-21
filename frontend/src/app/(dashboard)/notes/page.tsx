@@ -1,11 +1,10 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import PageHeading from "@/components/layout/PageHeading";
 import StickyNote from "@/components/notes/StickyNote";
 import { getCurrentUser } from "@/lib/auth/auth";
-import { getLatestReceivedNote } from "@/lib/notes/notes";
+import { getLatestReceivedNote, sendNote } from "@/lib/notes/notes";
 import type { CurrentUser } from "@/types/users";
 import type { Note } from "@/types/notes";
 
@@ -13,6 +12,7 @@ export default function Notes() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [latestNote, setLatestNote] = useState<Note | null>(null);
   const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
     getCurrentUser()
@@ -35,8 +35,16 @@ export default function Notes() {
       <div className="space-y-8">
         <section className="rounded-3xl bg-card p-5 shadow-sm">
           <form
-            onSubmit={(event) => {
+            onSubmit={async (event) => {
               event.preventDefault();
+              try {
+                await sendNote(message.trim());
+                setMessage("");
+                setFeedback("Note sent successfully!");
+              } catch(error) {
+                console.error("Failed to send note:", error);
+                setFeedback("Couldn't send your note. Please try again.");
+              }
             }}
           >
             <h2 className="font-semibold text-ink">
@@ -51,7 +59,7 @@ export default function Notes() {
               maxLength={500}
               className="mt-4 w-full resize-none rounded-2xl border border-border bg-background p-4 text-sm text-ink outline-none placeholder:text-muted focus:border-primary"
             />
-
+            {feedback && <p>{feedback}</p>}
             <div className="mt-4 flex items-center justify-between">
               <p className="text-xs text-muted">
                 It'll be signed from you.
