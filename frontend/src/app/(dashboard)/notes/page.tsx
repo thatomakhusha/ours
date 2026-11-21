@@ -4,25 +4,32 @@ import { useEffect, useState } from "react";
 import PageHeading from "@/components/layout/PageHeading";
 import StickyNote from "@/components/notes/StickyNote";
 import { getCurrentUser } from "@/lib/auth/auth";
-import { getLatestReceivedNote, sendNote } from "@/lib/notes/notes";
+import { sendNote, getSentNotes, getReceivedNotes } from "@/lib/notes/notes";
 import type { CurrentUser } from "@/types/users";
 import type { Note } from "@/types/notes";
 
 export default function Notes() {
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
-  const [latestNote, setLatestNote] = useState<Note | null>(null);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [message, setMessage] = useState("");
   const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
-    getCurrentUser()
-      .then(setCurrentUser)
-      .catch((error) => console.error("Failed to load user:", error));
+      getCurrentUser()
+        .then(setCurrentUser)
+        .catch((error) => console.error("Failed to load user:", error));
 
-    getLatestReceivedNote()
-      .then(setLatestNote)
-      .catch((error) => console.error("Failed to load note:", error));
-  }, []);
+      Promise.all([getSentNotes(), getReceivedNotes()])
+        .then(([sentNotes, receivedNotes]) => {
+          setNotes([...sentNotes, ...receivedNotes]);
+        })
+        .catch((error) => console.error("Failed to load notes:", error));
+    }, []);
+
+  const sortedNotes = [...notes].sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   return (
     <>
@@ -77,19 +84,16 @@ export default function Notes() {
         </section>
 
         <section className="space-y-8 px-2">
-          {latestNote && currentUser && (
-            <StickyNote
-              text={latestNote.content}
-              author={latestNote.senderDisplayName}
-              tone={
-                latestNote.senderId === currentUser.userId
-                  ? "his"
-                  : "hers"
-              }
-            />
-          )}
-
-          {!latestNote && (
+          {currentUser && sortedNotes.length > 0 ? (
+            sortedNotes.map((note) => (
+              <StickyNote
+                key={note.noteId}
+                text={note.content}
+                author={note.senderDisplayName}
+                tone={note.senderId === currentUser.userId ? "his" : "hers"}
+              />
+            ))
+          ) : (
             <p className="py-8 text-center text-sm text-muted">
               No notes to show just yet.
             </p>
