@@ -12,6 +12,13 @@ export function sendNote(content: string): Promise<Note> {
   });
 }
 
+export function updateNote(noteId: number, content: string): Promise<Note> {
+  return apiRequest<Note>(`/api/notes/${noteId}`, {
+    method: "PUT",
+    body: JSON.stringify({ content }),
+  });
+}
+
 export function getSentNotes(): Promise<Note[]> {
   return apiRequest<Note[]>("/api/notes/sent");
 }
