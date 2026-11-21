@@ -5,9 +5,10 @@ import StickyNote from "@/components/notes/StickyNote";
 type LatestNoteCardProps = {
   from: string;
   text: string;
+  createdAt: string;
 };
 
-export default function LatestNoteCard({ from, text }: LatestNoteCardProps) {
+export default function LatestNoteCard({ from, text, createdAt }: LatestNoteCardProps) {
   return (
     <section className="rounded-3xl bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between">
@@ -30,7 +31,7 @@ export default function LatestNoteCard({ from, text }: LatestNoteCardProps) {
       </div>
 
       <div className="mt-5">
-        <StickyNote text={text} author={from} />
+        <StickyNote text={text} author={from} createdAt={createdAt}/>
       </div>
     </section>
   );
