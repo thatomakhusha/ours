@@ -17,18 +17,33 @@ export default function Notes() {
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [editMessage, setEditMessage] = useState("");
   const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
-      getCurrentUser()
-        .then(setCurrentUser)
-        .catch((error) => console.error("Failed to load user:", error));
+    async function loadNotes() {
+      try {
+        const [user, sentNotes, receivedNotes] = await Promise.all([
+          getCurrentUser(),
+          getSentNotes(),
+          getReceivedNotes(),
+        ]);
 
-      Promise.all([getSentNotes(), getReceivedNotes()])
-        .then(([sentNotes, receivedNotes]) => {
-          setNotes([...sentNotes, ...receivedNotes]);
-        })
-        .catch((error) => console.error("Failed to load notes:", error));
-    }, []);
+        setCurrentUser(user);
+        setNotes([...sentNotes, ...receivedNotes]);
+      } catch (error) {
+        console.error("Failed to load Notes page:", error);
+        setLoadError("Couldn't load your notes. Please refresh and try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadNotes();
+  }, []);
 
   const sortedNotes = [...notes].sort(
     (a, b) =>
@@ -52,6 +67,8 @@ export default function Notes() {
       return;
     }
 
+    setIsSaving(true);
+
     try {
       await updateNote(noteId, editMessage.trim());
 
@@ -72,10 +89,14 @@ export default function Notes() {
       } else {
         setFeedback("Couldn't update your note. Please try again.");
       }
+    } finally {
+      setIsSaving(false);
     }
   }
 
   async function handleDelete(noteId: number) {
+    setIsDeleting(true);
+
     try {
       await deleteNote(noteId);
 
@@ -89,8 +110,16 @@ export default function Notes() {
       setNoteToDelete(null);
     } catch (error) {
       console.error("Failed to delete note:", error);
-      setFeedback("Couldn't delete your note. Please try again.");
+
+      if (error instanceof ApiError) {
+        setFeedback(error.message);
+      } else {
+        setFeedback("Couldn't delete your note. Please try again.");
+      }
+
       setNoteToDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -107,6 +136,9 @@ export default function Notes() {
           <form
             onSubmit={async (event) => {
               event.preventDefault();
+
+              setIsSending(true);
+
               try {
                 await sendNote(message.trim());
 
@@ -119,9 +151,16 @@ export default function Notes() {
 
                 setMessage("");
                 setFeedback("Note sent successfully!");
-              } catch(error) {
+              } catch (error) {
                 console.error("Failed to send note:", error);
-                setFeedback("Couldn't send your note. Please try again.");
+
+                if (error instanceof ApiError) {
+                  setFeedback(error.message);
+                } else {
+                  setFeedback("Couldn't send your note. Please try again.");
+                }
+              } finally {
+                setIsSending(false);
               }
             }}
           >
@@ -145,17 +184,25 @@ export default function Notes() {
 
               <button
                 type="submit"
-                disabled={!message.trim()}
+                disabled={!message.trim() || isSending}
                 className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white disabled:opacity-50"
               >
-                Leave note
+                {isSending ? "Sending..." : "Leave note"}
               </button>
             </div>
           </form>
         </section>
 
         <section className="space-y-8 px-2">
-          {currentUser && sortedNotes.length > 0 ? (
+          {isLoading ? (
+            <p className="py-8 text-center text-sm text-muted">
+              Loading your notes...
+            </p>
+          ) : loadError ? (
+            <p className="py-8 text-center text-sm text-red-600">
+              {loadError}
+            </p>
+          ) : currentUser && sortedNotes.length > 0 ? (
             sortedNotes.map((note) => (
               <div key={note.noteId}>
                 {editingNoteId === note.noteId ? (
@@ -175,9 +222,10 @@ export default function Notes() {
                       <button
                         type="button"
                         onClick={() => handleSave(note.noteId)}
+                        disabled={isSaving}
                         className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white"
                       >
-                        Save
+                        {isSaving ? "Saving..." : "Save"}
                       </button>
 
                       <button
@@ -186,6 +234,7 @@ export default function Notes() {
                           setEditingNoteId(null);
                           setEditMessage("");
                         }}
+                        disabled={isSaving}
                         className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-ink"
                       >
                         Cancel
@@ -250,6 +299,7 @@ export default function Notes() {
               <button
                 type="button"
                 onClick={() => setNoteToDelete(null)}
+                disabled={isDeleting}
                 className="rounded-xl border border-border px-4 py-2.5 text-sm font-semibold text-ink"
               >
                 Cancel
@@ -258,9 +308,10 @@ export default function Notes() {
               <button
                 type="button"
                 onClick={() => handleDelete(noteToDelete)}
+                disabled={isDeleting}
                 className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700"
               >
-                Delete note
+                {isDeleting ? "Deleting..." : "Delete note"}
               </button>
             </div>
           </div>
